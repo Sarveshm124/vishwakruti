@@ -1,5 +1,3 @@
-// src/scripts/viewcontacts.ts
-
 import { sequelize } from '../config/db';
 import Contact from '../models/Contact';
 
@@ -24,13 +22,12 @@ async function viewAllContacts() {
         console.log(`First Name: ${contact.firstName}`);
         console.log(`Last Name: ${contact.lastName}`);
         console.log(`Email: ${contact.email}`);
-        console.log(`Phone: ${contact.phone || 'N/A'}`);
-        console.log(`Address: ${contact.address || 'N/A'}`);
+        console.log(`Phone: ${contact.phone}`);
+        console.log(`Address: ${contact.address}`);
         console.log(`Message: ${contact.message}`);
         console.log(`Created At: ${contact.createdAt}`);
         console.log('-------------');
       });
-
       console.log(`Total contacts: ${contacts.length}`);
     }
   } catch (error) {

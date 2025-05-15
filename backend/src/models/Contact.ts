@@ -1,13 +1,13 @@
-// src/models/Contact.ts
-
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/db';
 
+// Define the Contact attributes
 interface ContactAttributes {
   id: number;
   user: string;
-  firstName: string;
-  lastName: string;
+  name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone?: string;
   address?: string;
@@ -16,17 +16,16 @@ interface ContactAttributes {
   updatedAt?: Date;
 }
 
-interface ContactCreationAttributes extends Optional<
-  ContactAttributes,
-  'id' | 'phone' | 'address' | 'createdAt' | 'updatedAt'
-> {}
+// Optional attributes for creation
+interface ContactCreationAttributes extends Optional<ContactAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-class Contact extends Model<ContactAttributes, ContactCreationAttributes>
-  implements ContactAttributes {
+// Define the Contact model
+class Contact extends Model<ContactAttributes, ContactCreationAttributes> implements ContactAttributes {
   public id!: number;
   public user!: string;
-  public firstName!: string;
-  public lastName!: string;
+  public name!: string;
+  public firstName?: string;
+  public lastName?: string;
   public email!: string;
   public phone?: string;
   public address?: string;
@@ -36,6 +35,7 @@ class Contact extends Model<ContactAttributes, ContactCreationAttributes>
   public readonly updatedAt!: Date;
 }
 
+// Initialize the model
 Contact.init(
   {
     id: {
@@ -47,13 +47,17 @@ Contact.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    firstName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -70,6 +74,14 @@ Contact.init(
     message: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {

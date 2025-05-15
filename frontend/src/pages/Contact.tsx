@@ -96,7 +96,7 @@ const ContactPage: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -105,21 +105,32 @@ const ContactPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validatePhoneNumber = (phone: string) => {
+    const regex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
+    return regex.test(phone);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitError("");
+    setSubmitError(null);
     setSubmitSuccess(false);
+
+    // Validate phone number
+    if (!validatePhoneNumber(formData.phone)) {
+      setSubmitError("Please enter a valid 10-digit phone number.");
+      setIsSubmitting(false);
+      return;
+    }
 
     // Combine firstName and lastName into a single "name" field
     const contactData = {
       ...formData,
-      name: `${formData.firstName} ${formData.lastName}`, // Create full name
+      name: `${formData.firstName} ${formData.lastName}`,
     };
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000"; // Default for local development
-      await axios.post(`${apiUrl}/api/contact`, contactData, {
+      await axios.post("http://localhost:8000/api/contact", contactData, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -133,6 +144,9 @@ const ContactPage: React.FC = () => {
         address: "",
         message: "",
       });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSubmitSuccess(false), 3000);
     } catch (error: any) {
       setSubmitError(error.response?.data?.message || "Something went wrong.");
     } finally {

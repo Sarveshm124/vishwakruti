@@ -7,25 +7,32 @@ import contactRoutes from './routes/contactRoutes';
 // Load environment variables
 dotenv.config();
 
-// Connect to database
+// Connect to SQLite database
 connectDB();
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '8000', 10); // Convert to number
+const PORT = Number(process.env.PORT) || 8000;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
+
+// CORS: Allow frontend to access backend
+app.use(cors({
+  origin: CLIENT_ORIGIN,
+  credentials: true,
+}));
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use('/api/contact', contactRoutes);
 
-// Health check route
+// Test route
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  res.send('✅ API is running...');
 });
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Accessible from: ${CLIENT_ORIGIN}`);
 });

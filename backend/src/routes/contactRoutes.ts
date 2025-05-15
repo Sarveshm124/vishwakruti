@@ -1,22 +1,12 @@
-import { Router } from 'express';
-import { sequelize } from '../config/db';
+import express, { RequestHandler } from 'express';
+import { createContact, getAllContacts } from '../controllers/contactController';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/', async (req, res) => {
-  const { name, email, phone, address, message } = req.body;
-  
-  try {
-    const result = await sequelize.query(
-      'INSERT INTO contact_us (name, email, phone, address, message) VALUES (?, ?, ?, ?, ?)', 
-      {
-        replacements: [name, email, phone, address, message],
-      }
-    );
-    res.status(200).json({ message: 'Contact saved successfully!' });
-  } catch (error) {
-    res.status(500).json({ message: 'Database error, please try again.' });
-  }
-});
+// POST /api/contact - Create a new contact form submission
+router.post('/', createContact as RequestHandler);
 
-export default router;
+// GET /api/contact - Get all contact form submissions
+router.get('/', getAllContacts as RequestHandler);
+
+export default router; 

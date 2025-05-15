@@ -2,31 +2,28 @@ import { Sequelize } from 'sequelize';
 import path from 'path';
 import fs from 'fs';
 
-// Ensure the database directory exists
-const dbDir = path.join(__dirname, '../../');
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
-}
+// Optional: Rename db to reflect frontend context
+const dbPath = path.resolve(__dirname, '..', 'contact_db.sqlite');
 
-// Create a SQLite database connection
-const dbPath = path.join(dbDir, 'contact_db.sqlite');
+const dir = path.dirname(dbPath);
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: dbPath,
-  logging: false, // Set to true if you want to debug SQL
+  logging: false,
 });
 
 const connectDB = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
-    console.log('✅ SQLite database connected successfully');
-
-    // Sync all models
-    await sequelize.sync();
-    console.log('✅ All models synchronized successfully');
+    console.log('SQLite Database connected successfully');
+    await sequelize.sync(); // Ensure models are created
+    console.log('All models were synchronized successfully');
   } catch (error) {
-    console.error('❌ Unable to connect to the database:', error);
+    console.error('Unable to connect to the database:', error);
     process.exit(1);
   }
 };
